@@ -80,46 +80,52 @@
     </div>
 
     <script>
-        var params = new URLSearchParams(window.location.search);
-        var code = params.get('code');
-        var state = params.get('state');
-        var error = params.get('error');
-        var errorReason = params.get('error_reason');
-        var errorDescription = params.get('error_description');
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+        const error = params.get('error');
+        const errorReason = params.get('error_reason');
+        const errorDescription = params.get('error_description');
+
+        const spinner = document.getElementById('spinner');
+        const checkmark = document.getElementById('checkmark');
+        const message = document.getElementById('message');
+        const button = document.getElementById('openApp');
 
         if (error) {
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('checkmark').style.display = 'block';
-            document.getElementById('checkmark').textContent = '❌';
+            spinner.style.display = 'none';
+            checkmark.style.display = 'block';
+            checkmark.textContent = '❌';
 
             if (errorReason === 'user_denied') {
-                document.getElementById('message').textContent = 'Authentication cancelled';
+                message.textContent = 'Authentication cancelled';
             } else {
-                document.getElementById('message').textContent = 'Authentication failed: ' + (errorDescription || error);
+                message.textContent = 'Authentication failed: ' + (errorDescription || error);
             }
         } else if (code) {
-            var appURL = 'vibein://instagram/callback?code=' + encodeURIComponent(code);
+            // Build the app URL
+            let appURL = 'vibein://instagram/callback?code=' + encodeURIComponent(code);
             if (state) {
                 appURL += '&state=' + encodeURIComponent(state);
             }
 
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('checkmark').style.display = 'block';
-            document.getElementById('message').textContent = 'Authentication successful!';
+            // Show success
+            spinner.style.display = 'none';
+            checkmark.style.display = 'block';
+            message.textContent = 'Authentication successful!';
 
-            var button = document.getElementById('openApp');
+            // Set up the button
             button.href = appURL;
             button.style.display = 'inline-block';
 
+            // Redirect automatically
             window.location.href = appURL;
-            setTimeout(function() {
-                window.location.href = appURL;
-            }, 500);
+            setTimeout(() => { window.location.href = appURL; }, 500);
         } else {
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('checkmark').style.display = 'block';
-            document.getElementById('checkmark').textContent = '❌';
-            document.getElementById('message').textContent = 'Invalid callback - missing code';
+            spinner.style.display = 'none';
+            checkmark.style.display = 'block';
+            checkmark.textContent = '❌';
+            message.textContent = 'Invalid callback - missing code';
         }
     </script>
 </body>
